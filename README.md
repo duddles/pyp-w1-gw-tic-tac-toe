@@ -71,7 +71,7 @@ When you are reaching the final movements, there are two possible game endings: 
 ```python
 # Option 1: "O" wins the game
 >>> move(game, player2, position=(2, 1))
->>> game['winner']
+>>> print_winner(game)
 "O"
 >>> move(game, player1, position=(2, 2))
 InvalidMovement: Game is over, "O" wins.
