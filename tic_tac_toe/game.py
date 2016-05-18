@@ -1,13 +1,3 @@
-
-# exceptions
-class InvalidMovement(Exception):
-    pass
-
-
-class GameOver(Exception):
-    pass
-
-
 # internal helpers
 def _position_is_empty_in_board(position, board):
     """
