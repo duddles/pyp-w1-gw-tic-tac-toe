@@ -3,7 +3,17 @@
 You will need to build a simple version of the classic Tic-tac-toe game.
 Your program is supposed to work in a two-players basis. "Machine-mode" is not required to be implemented.
 
-The board structure should look something similar to this:
+The board should be implemented using nested lists. This is an example of the board:
+```python
+board = [
+    ["-", "-", "-"],
+    ["-", "-", "-"],
+    ["-", "-", "-"],
+]
+```
+
+The position of a particular cell in the board is going to be given by two indexes (first idx for the row, and second idx for the column), here's an example:
+
 ```
 (0,0) | (0,1) | (0,2)
 ---------------------
