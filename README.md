@@ -43,7 +43,7 @@ To create a new game and start doing your movements, you must follow this logic:
 
 The `start_new_game` function creates a new game configuration. It will basically create a data structure (dict in this case), holding all the needed information to start playing.
 
-Once your new game configuration is done, both players can start with their movements:
+Once your new game configuration is done, both players can start with their movements. To create a movement, you need to implement the `move` function, which receives three parameters: the game structure (as seen above), the player to play, and a tuple containing the position (first value for row, second for column):
 
 ```python
 # Start playing...
