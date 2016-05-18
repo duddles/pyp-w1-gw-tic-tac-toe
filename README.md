@@ -4,7 +4,7 @@ You will need to build a simple version of the classic Tic-tac-toe game.
 Your program is supposed to work in a two-players basis. "Machine-mode" is not required to be implemented.
 
 The board structure should look something similar to this:
-```python
+```
 (0,0) | (0,1) | (0,2)
 ---------------------
 (1,0) | (1,1) | (1,2)
@@ -57,7 +57,7 @@ InvalidMovement: Position out of range.
 
 If at some point during the game you want to check which is the current state of the board, you can invoke the `print_board` function:
 
-```python
+```
 >>> print_board(game)
 X  |  O  |  X
 --------------
