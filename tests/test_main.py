@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from main import (start_new_game, is_valid, is_empty, is_board_complete,
-                  check_win, move, print_winner, InvalidMovement, print_board,
-                  is_board_complete)
+from main import (start_new_game, get_board_as_string, move, get_winner,
+                  get_next_turn, _position_is_valid, _position_is_empty_in_board,
+                  _board_is_full, _check_winning_combinations, _board_is_full,
+                  InvalidMovement, GameOver)
 
 
 class TestTicTacToe(unittest.TestCase):
@@ -35,14 +36,14 @@ class TestTicTacToe(unittest.TestCase):
             (2,0), (2,1), (2,2),
         ]
         for position in valid_positions:
-            self.assertTrue(is_valid(position))
+            self.assertTrue(_position_is_valid(position))
 
     def test_is_valid_position_invalid(self):
         invalid_positions = [
             (2,3), (3,2), (3,3), (9,9), (-1,-1), 1, "something", False, (0,0,0)
         ]
         for position in invalid_positions:
-            self.assertFalse(is_valid(position))
+            self.assertFalse(_position_is_valid(position))
 
     def test_is_empty_position(self):
         board = self.game['board']
@@ -52,9 +53,9 @@ class TestTicTacToe(unittest.TestCase):
             (2,0), (2,1), (2,2),
         ]
         for position in empty_positions:
-            self.assertTrue(is_empty(position, board))
+            self.assertTrue(_position_is_empty_in_board(position, board))
         board[0][1] = self.x
-        self.assertFalse(is_empty((0,1), board))
+        self.assertFalse(_position_is_empty_in_board((0,1), board))
 
 
     def test_is_board_complete(self):
@@ -63,7 +64,7 @@ class TestTicTacToe(unittest.TestCase):
             ["O", "X", "X"],
             ["O", "X", "O"],
         ]
-        self.assertTrue(is_board_complete(self.game['board']))
+        self.assertTrue(_board_is_full(self.game['board']))
 
     def test_is_board_complete_false(self):
         self.game['board'] = [
@@ -71,7 +72,7 @@ class TestTicTacToe(unittest.TestCase):
             ["O", "-", "-"],
             ["O", "X", "O"],
         ]
-        self.assertFalse(is_board_complete(self.game['board']))
+        self.assertFalse(_board_is_full(self.game['board']))
 
     def test_check_win_no_winner(self):
         board = [
@@ -79,7 +80,7 @@ class TestTicTacToe(unittest.TestCase):
             ["O", "X", "X"],
             ["O", "X", "O"],
         ]
-        self.assertEqual(check_win(board, self.x), None)
+        self.assertEqual(_check_winning_combinations(board, self.x), None)
 
     def test_check_win_X_wins(self):
         # diagonals
@@ -88,51 +89,51 @@ class TestTicTacToe(unittest.TestCase):
             ["O", "X", "X"],
             ["O", "O", "X"],
         ]
-        self.assertEqual(check_win(board, self.x), "X")
+        self.assertEqual(_check_winning_combinations(board, self.x), "X")
         board = [
             ["O", "O", "X"],
             ["O", "X", "X"],
             ["X", "O", "O"],
         ]
-        self.assertEqual(check_win(board, self.x), "X")
+        self.assertEqual(_check_winning_combinations(board, self.x), "X")
         # horizontals
         board = [
             ["X", "X", "X"],
             ["X", "O", "O"],
             ["O", "O", "X"],
         ]
-        self.assertEqual(check_win(board, self.x), "X")
+        self.assertEqual(_check_winning_combinations(board, self.x), "X")
         board = [
             ["X", "O", "O"],
             ["X", "X", "X"],
             ["O", "O", "X"],
         ]
-        self.assertEqual(check_win(board, self.x), "X")
+        self.assertEqual(_check_winning_combinations(board, self.x), "X")
         board = [
             ["X", "O", "O"],
             ["O", "O", "X"],
             ["X", "X", "X"],
         ]
-        self.assertEqual(check_win(board, self.x), "X")
+        self.assertEqual(_check_winning_combinations(board, self.x), "X")
         # verticals
         board = [
             ["X", "O", "X"],
             ["O", "O", "X"],
             ["O", "X", "X"],
         ]
-        self.assertEqual(check_win(board, self.x), "X")
+        self.assertEqual(_check_winning_combinations(board, self.x), "X")
         board = [
             ["X", "X", "O"],
             ["O", "X", "O"],
             ["O", "X", "X"],
         ]
-        self.assertEqual(check_win(board, self.x), "X")
+        self.assertEqual(_check_winning_combinations(board, self.x), "X")
         board = [
             ["X", "X", "O"],
             ["X", "O", "O"],
             ["X", "O", "X"],
         ]
-        self.assertEqual(check_win(board, self.x), "X")
+        self.assertEqual(_check_winning_combinations(board, self.x), "X")
 
     def test_check_win_O_wins(self):
         # diagonals
@@ -141,51 +142,51 @@ class TestTicTacToe(unittest.TestCase):
             ["X", "O", "O"],
             ["X", "X", "O"],
         ]
-        self.assertEqual(check_win(board, self.o), "O")
+        self.assertEqual(_check_winning_combinations(board, self.o), "O")
         board = [
             ["X", "X", "O"],
             ["X", "O", "O"],
             ["O", "X", "X"],
         ]
-        self.assertEqual(check_win(board, self.o), "O")
+        self.assertEqual(_check_winning_combinations(board, self.o), "O")
         # horizontals
         board = [
             ["O", "O", "O"],
             ["O", "X", "X"],
             ["X", "X", "O"],
         ]
-        self.assertEqual(check_win(board, self.o), "O")
+        self.assertEqual(_check_winning_combinations(board, self.o), "O")
         board = [
             ["O", "X", "X"],
             ["O", "O", "O"],
             ["X", "X", "O"],
         ]
-        self.assertEqual(check_win(board, self.o), "O")
+        self.assertEqual(_check_winning_combinations(board, self.o), "O")
         board = [
             ["O", "X", "X"],
             ["X", "X", "O"],
             ["O", "O", "O"],
         ]
-        self.assertEqual(check_win(board, self.o), "O")
+        self.assertEqual(_check_winning_combinations(board, self.o), "O")
         # verticals
         board = [
             ["O", "X", "O"],
             ["X", "X", "O"],
             ["X", "O", "O"],
         ]
-        self.assertEqual(check_win(board, self.o), "O")
+        self.assertEqual(_check_winning_combinations(board, self.o), "O")
         board = [
             ["O", "O", "X"],
             ["X", "O", "X"],
             ["X", "O", "O"],
         ]
-        self.assertEqual(check_win(board, self.o), "O")
+        self.assertEqual(_check_winning_combinations(board, self.o), "O")
         board = [
             ["O", "O", "X"],
             ["O", "X", "X"],
             ["O", "X", "O"],
         ]
-        self.assertEqual(check_win(board, self.o), "O")
+        self.assertEqual(_check_winning_combinations(board, self.o), "O")
 
     def test_play_no_winner(self):
         # [
@@ -201,11 +202,11 @@ class TestTicTacToe(unittest.TestCase):
         move(self.game, self.o, position=(1, 1))
         move(self.game, self.x, position=(2, 0))
         move(self.game, self.o, position=(2, 2))
-        move(self.game, self.x, position=(2, 1))
-        self.assertEqual(print_winner(self.game), None)
-        self.assertTrue(is_board_complete(self.game['board']))
-        with self.assertRaisesRegexp(InvalidMovement,
-                                     'Game is over, no winner.'):
+        with self.assertRaisesRegexp(GameOver, 'Game is tied!'):
+            move(self.game, self.x, position=(2, 1))
+        self.assertEqual(get_winner(self.game), None)
+        self.assertTrue(_board_is_full(self.game['board']))
+        with self.assertRaisesRegexp(InvalidMovement, 'Game is over.'):
             move(self.game, self.o, position=(0, 0))
 
     def test_play_X_wins(self):
@@ -218,10 +219,10 @@ class TestTicTacToe(unittest.TestCase):
         move(self.game, self.o, position=(1, 0))
         move(self.game, self.x, position=(0, 1))
         move(self.game, self.o, position=(1, 1))
-        move(self.game, self.x, position=(0, 2))
-        self.assertEqual(print_winner(self.game), self.x)
-        with self.assertRaisesRegexp(InvalidMovement,
-                                     'Game is over, "X" wins.'):
+        with self.assertRaisesRegexp(GameOver, '"X" wins!'):
+            move(self.game, self.x, position=(0, 2))
+        self.assertEqual(get_winner(self.game), self.x)
+        with self.assertRaisesRegexp(InvalidMovement, 'Game is over'):
             move(self.game, self.o, position=(2, 2))
 
     def test_play_O_wins(self):
@@ -235,10 +236,10 @@ class TestTicTacToe(unittest.TestCase):
         move(self.game, self.x, position=(0, 2))
         move(self.game, self.o, position=(1, 1))
         move(self.game, self.x, position=(1, 0))
-        move(self.game, self.o, position=(2, 2))
-        self.assertEqual(print_winner(self.game), self.o)
-        with self.assertRaisesRegexp(InvalidMovement,
-                                     'Game is over, "O" wins.'):
+        with self.assertRaisesRegexp(GameOver, '"O" wins!'):
+            move(self.game, self.o, position=(2, 2))
+        self.assertEqual(get_winner(self.game), self.o)
+        with self.assertRaisesRegexp(InvalidMovement, 'Game is over'):
             move(self.game, self.x, position=(2, 0))
 
     def test_play_one_player_moves_twice(self):
@@ -270,4 +271,9 @@ O  |  X  |  X
 --------------
 O  |  X  |  O
 """
-        self.assertEqual(print_board(self.game), expected)
+        self.assertEqual(get_board_as_string(self.game), expected)
+
+    def test_get_next_turn(self):
+        self.assertEqual(get_next_turn(self.game), self.x)
+        move(self.game, self.x, position=(0, 0))
+        self.assertEqual(get_next_turn(self.game), self.o)

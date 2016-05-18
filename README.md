@@ -65,10 +65,10 @@ InvalidMovement: Position out of range.
 >>> move(game, player1, position=(2, 0))
 ```
 
-If at some point during the game you want to check which is the current state of the board, you can invoke the `print_board` function:
+If at some point during the game you want to check which is the current state of the board, you can invoke the `get_board_as_string` function:
 
 ```
->>> print_board(game)
+>>> get_board_as_string(game)
 X  |  O  |  X
 --------------
 O  |  O  |  X
@@ -76,21 +76,41 @@ O  |  O  |  X
 X  |  -  |  -
 ```
 
-When you are reaching the final movements, there are two possible game endings: one of the players wins the game, or the game is tied:
+When you are reaching the final movements, there are two possible game endings: one of the players wins the game, or the game is tied. In any of the cases, a `GameOver`
+exception will be raised when the last movement is performed.
 
 ```python
 # Option 1: "O" wins the game
 >>> move(game, player2, position=(2, 1))
->>> print_winner(game)
+GameOver: "O" wins!
+>>> get_winner(game)
 "O"
 >>> move(game, player1, position=(2, 2))
-InvalidMovement: Game is over, "O" wins.
+InvalidMovement: Game is over.
 
 # Option 2: No winner
 >>> move(game, player2, position=(2, 2))
 >>> move(game, player1, position=(2, 1))
->>> print_winner(game)
+GameOver: Game is tied!
+>>> get_winner(game)
 None
 >>> move(game, player2, position=(0, 0))
-InvalidMovement: Game is over, no winner.
+InvalidMovement: Game is over.
 ```
+
+As a quick summary, this is the public interface you must respect:
+
+```python
+start_new_game(player1, player2)
+
+move(game, player, position)
+
+get_next_turn(game)
+
+get_board_as_string(game)
+
+get_winner(game)
+```
+
+You will notice in the file `main.py` that some other internal helpers must
+also be implemented in order to support the game.
