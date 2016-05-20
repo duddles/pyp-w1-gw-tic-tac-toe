@@ -27,12 +27,9 @@ def _position_is_valid(position):
 
     Returns True if given position is valid, False otherwise.
     """
-    if type(position) != tuple:
-        return False
-    if len(position) != 2:
+    if type(position) != tuple or len(position) != 2:
         return False
     return 0 <= position[0] < 3 and 0 <= position[1] < 3
-
 
 def _board_is_full(board):
     """
@@ -40,8 +37,7 @@ def _board_is_full(board):
 
     :param board: Game board.
     """
-    return all([entry != '-' for row in board for entry in row])
-
+    return all(['-' not in row for row in board])
 
 def _is_winning_combination(board, combination, player):
     """
@@ -59,7 +55,6 @@ def _is_winning_combination(board, combination, player):
             return False
     return True
 
-
 def _check_winning_combinations(board, player):
     """
     There are 8 posible combinations (3 horizontals, 3, verticals and 2 diagonals)
@@ -74,28 +69,21 @@ def _check_winning_combinations(board, player):
     by given player, or None otherwise.
     """
     # Define all possible combinations for winning the game
-    combinations = {
-        "horizontals": [
-            ((0, 0), (0, 1), (0, 2)), 
-            ((1, 0), (1, 1), (1, 2)),
-            ((2, 0), (2, 1), (2, 2))
-        ],
-        "verticals": [
-            ((0, 0), (1, 0), (2, 0)),
-            ((0, 1), (1, 1), (2, 1)),
-            ((0, 2), (1, 2), (2, 2))
-        ],
-        "diagonals": [
-            ((0, 0), (1, 1), (2, 2)),
-            ((0, 2), (1, 1), (2, 0))
-        ]
-    }
-    for key in combinations:
-        for combination in combinations[key]:
-            if _is_winning_combination(board, combination, player):
-                return player
-    return None
+    combinations = [
+        ((0, 0), (0, 1), (0, 2)), # horizontals 
+        ((1, 0), (1, 1), (1, 2)),
+        ((2, 0), (2, 1), (2, 2)),
+        ((0, 0), (1, 0), (2, 0)), # verticals
+        ((0, 1), (1, 1), (2, 1)),
+        ((0, 2), (1, 2), (2, 2)),
+        ((0, 0), (1, 1), (2, 2)), # diagonals
+        ((0, 2), (1, 1), (2, 0))
+    ]
 
+    for combination in combinations:
+        if _is_winning_combination(board, combination, player):
+            return player
+    return None
 
 # public interface
 def start_new_game(player1, player2):
@@ -113,7 +101,6 @@ def start_new_game(player1, player2):
     
     return game
 
-
 def get_winner(game):
     """
     Returns the winner player if any, or None otherwise.
@@ -126,7 +113,6 @@ def get_winner(game):
         return player2
     else:
         return None
-        
 
 def move(game, player, position):
     """
@@ -134,7 +120,6 @@ def move(game, player, position):
     checks before the actual movement is done.
     After registering the movement it must check if the game is over.
     """
-    
     # check if game is already over
     if game['winner'] or _board_is_full(game['board']):
         raise InvalidMovement('Game is over.')
@@ -157,11 +142,11 @@ def move(game, player, position):
         raise GameOver('"{}" wins!'.format(winner))
     if _board_is_full(game['board']):
         raise GameOver('Game is tied!')
+        
     # give the next player a turn
     swap_players = {'X': 'O', 'O': 'X'}
     game['next_turn'] = swap_players[player]
     return 
-
 
 def get_board_as_string(game):
     """
@@ -183,18 +168,11 @@ def get_board_as_string(game):
     rows.insert(0, '')
     return os.linesep.join(rows)
 
-
 def get_next_turn(game):
     """
     Returns the player who plays next, or None if the game is already over.
     """
-    # If there is a winner, return None
-    winner = game['winner']
-    if winner:
+    # If there is a winner or a tie, return None
+    if game['winner'] or _board_is_full(game['board']):
         return None
-    
-    # If there is a tie, return None
-    if _board_is_full(game['board']):
-        return None
-    
     return game['next_turn']
