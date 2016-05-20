@@ -105,14 +105,10 @@ def get_winner(game):
     """
     Returns the winner player if any, or None otherwise.
     """
-    player1, player2 = game['player1'], game['player2']
-    board = game['board']
-    if _check_winning_combinations(board, player1):
-        return player1
-    elif _check_winning_combinations(board, player2):
-        return player2
-    else:
-        return None
+    for player in [game['player1'], game['player2']]:
+        if _check_winning_combinations(game['board'], player):
+            return player
+    return None
 
 def move(game, player, position):
     """
